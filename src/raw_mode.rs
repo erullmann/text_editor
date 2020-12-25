@@ -11,13 +11,13 @@ impl RawMode {
     pub fn new(new_fd: RawFileDescriptor) -> Result<RawMode, Box<dyn Error>>{
         let raw_mode = RawMode {
             fd: new_fd,
-            original_termios: Termios::from_fd(new_fd)?
+            original_termios: Termios::from_fd(new_fd)?.clone()
         };
         raw_mode.enable_raw_mode()?;
         return Ok(raw_mode);
     }
 
-    fn disable_raw_mode(&self) -> Result<(), Box<(dyn Error + 'static)>> {
+    pub fn disable_raw_mode(&self) -> Result<(), Box<(dyn Error + 'static)>> {
         tcsetattr(self.fd, TCSAFLUSH, &self.original_termios)?;
         return Ok(());
     }
